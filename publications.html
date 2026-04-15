@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Publications · Dario Azzimonti</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    #bib-loading {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      padding: 2rem 0;
+    }
+    .filter-bar {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 2.5rem;
+    }
+    .filter-btn {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.35rem 0.9rem;
+      border: 1px solid var(--rule);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      background: var(--ink);
+      color: var(--bg);
+      border-color: var(--ink);
+    }
+    .year-header {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border-bottom: 1px solid var(--rule);
+      padding-bottom: 0.5rem;
+      margin: 2.5rem 0 1rem;
+    }
+    .pub-entry.hidden { display: none; }
+    .pub-type-badge {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-top: 0.15rem;
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-name" href="index.html">Dario Azzimonti</a>
+  <ul class="nav-links">
+    <li><a href="index.html">About</a></li>
+    <li><a href="publications.html" class="active">Publications</a></li>
+    <li><a href="software.html">Software</a></li>
+  </ul>
+</nav>
+
+<div class="page">
+  <p class="section-label">Publications</p>
+  <h2>Papers &amp; Preprints</h2>
+  <p style="color:var(--muted); font-size:0.88rem; margin-bottom:2rem;">
+    For the full and most up-to-date list, see
+    <a href="https://scholar.google.ch/citations?user=CibU0GIAAAAJ&hl=en" style="color:var(--accent)" target="_blank">Google Scholar</a>
+    or <a href="https://dblp.org/pid/241/9859.html" style="color:var(--accent)" target="_blank">DBLP</a>.
+  </p>
+
+  <div class="filter-bar">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="article">Journal Articles</button>
+    <button class="filter-btn" data-filter="inproceedings">Conference Papers</button>
+    <button class="filter-btn" data-filter="misc">Preprints</button>
+    <button class="filter-btn" data-filter="phdthesis">Thesis</button>
+  </div>
+
+  <div id="bib-loading">Loading publications…</div>
+  <div id="pub-list"></div>
+</div>
+
+<footer>
+  © 2025 Dario Azzimonti · IDSIA USI-SUPSI · Lugano, Switzerland
+</footer>
+
+<script>
+// ─────────────────────────────────────────────
+// BibTeX parser
+// ─────────────────────────────────────────────
+function parseBib(text) {
+  const entries = [];
+  text = text.replace(/^%[^\n]*/gm, '');
+
+  const entryRe = /@(\w+)\s*\{([^,\s]+)\s*,/g;
+  let match;
+  while ((match = entryRe.exec(text)) !== null) {
+    const type = match[1].toLowerCase();
+    if (['comment','string','preamble'].includes(type)) continue;
+    const key   = match[2].trim();
+    const start = match.index + match[0].length;
+
+    // Walk forward to find the matching closing brace
+    let depth = 1, i = start;
+    while (i < text.length && depth > 0) {
+      if (text[i] === '{') depth++;
+      else if (text[i] === '}') depth--;
+      i++;
+    }
+    const body = text.slice(start, i - 1);
+    const fields = parseFields(body);
+    entries.push({ type, key, ...fields });
+  }
+  return entries;
+}
+
+function parseFields(body) {
+  const fields = {};
+  let i = 0;
+  while (i < body.length) {
+    while (i < body.length && /[\s,]/.test(body[i])) i++;
+    if (i >= body.length) break;
+
+    // Field name
+    const nameStart = i;
+    while (i < body.length && body[i] !== '=') i++;
+    const name = body.slice(nameStart, i).trim().toLowerCase();
+    i++; // skip '='
+
+    while (i < body.length && /\s/.test(body[i])) i++;
+    if (i >= body.length) break;
+
+    let value = '';
+    if (body[i] === '{') {
+      let depth = 0, start = i;
+      while (i < body.length) {
+        if (body[i] === '{') depth++;
+        else if (body[i] === '}') { depth--; if (depth === 0) { i++; break; } }
+        i++;
+      }
+      value = body.slice(start + 1, i - 1);
+    } else if (body[i] === '"') {
+      i++;
+      const start = i;
+      while (i < body.length && body[i] !== '"') i++;
+      value = body.slice(start, i);
+      i++;
+    } else {
+      const start = i;
+      while (i < body.length && !/[,}]/.test(body[i])) i++;
+      value = body.slice(start, i).trim();
+    }
+
+    if (name) fields[name] = cleanLatex(value.trim());
+  }
+  return fields;
+}
+
+function cleanLatex(s) {
+  const acuteMap  = {a:'á',e:'é',i:'í',o:'ó',u:'ú',A:'Á',E:'É',I:'Í',O:'Ó',U:'Ú'};
+  const umlautMap = {a:'ä',e:'ë',i:'ï',o:'ö',u:'ü',A:'Ä',E:'Ë',I:'Ï',O:'Ö',U:'Ü'};
+  return s
+    .replace(/\{\\'([aeiouAEIOU])\}/g,  (_, c) => acuteMap[c]  || c)
+    .replace(/\\'(\w)/g,                (_, c) => acuteMap[c]  || c)
+    .replace(/\{\\"([aeiouAEIOU])\}/g,  (_, c) => umlautMap[c] || c)
+    .replace(/\\"(\w)/g,                (_, c) => umlautMap[c] || c)
+    .replace(/\{\\~([nN])\}/g, (_, c) => c === 'n' ? 'ñ' : 'Ñ')
+    .replace(/\\~\{([nN])\}/g, (_, c) => c === 'n' ? 'ñ' : 'Ñ')
+    .replace(/\{\\c\{?([cC])\}?\}/g,   (_, c) => c === 'c' ? 'ç' : 'Ç')
+    .replace(/\{\\v\{?([sS])\}?\}/g,   (_, c) => c === 's' ? 'š' : 'Š')
+    .replace(/\{\\o\}/g, 'ø')
+    .replace(/\\&/g, '&')
+    .replace(/---/g, '—').replace(/--/g, '–')
+    .replace(/[{}]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+// ─────────────────────────────────────────────
+// Format one entry as APA-like HTML
+// ─────────────────────────────────────────────
+function formatEntry(e) {
+  const type = e.type;
+
+  let venue = '';
+  if (type === 'article') {
+    const j = e.journal || '';
+    const v = e.volume  ? `, <em>${e.volume}</em>` : '';
+    const n = e.number  ? `(${e.number})`          : '';
+    const p = e.pages   ? `, ${e.pages.replace('--','–')}` : '';
+    venue = `<em>${j}</em>${v}${n}${p}.`;
+
+  } else if (type === 'inproceedings') {
+    const b = e.booktitle || '';
+    const p = e.pages ? `, pp. ${e.pages.replace('--','–')}` : '';
+    venue = `In <em>${b}</em>${p}.`;
+
+  } else if (type === 'phdthesis') {
+    venue = `Ph.D. thesis, ${e.school || ''}.`;
+
+  } else if (type === 'misc') {
+    if (e.eprint) {
+      const prefix = e.archiveprefix || 'arXiv';
+      venue = `<em>${prefix}</em>:${e.eprint}.`;
+    } else if (e.note) {
+      venue = e.note + '.';
+    }
+
+  } else if (type === 'manual') {
+    venue = e.note ? e.note + '.' : 'R package.';
+  }
+
+  // Links
+  let links = '';
+  if (e.doi)              links += `<a class="pub-link" href="https://doi.org/${e.doi}" target="_blank">doi</a>`;
+  if (e.url && !e.doi)    links += `<a class="pub-link" href="${e.url}" target="_blank">link</a>`;
+  if (e.eprint)           links += `<a class="pub-link" href="https://arxiv.org/abs/${e.eprint}" target="_blank">arXiv</a>`;
+
+  return { venue, links };
+}
+
+// ─────────────────────────────────────────────
+// Build DOM
+// ─────────────────────────────────────────────
+function buildPubList(entries) {
+  const typePriority = { article:0, inproceedings:1, misc:2, manual:3, phdthesis:4 };
+  entries.sort((a, b) => {
+    const dy = (parseInt(b.year)||0) - (parseInt(a.year)||0);
+    if (dy !== 0) return dy;
+    return (typePriority[a.type]??5) - (typePriority[b.type]??5);
+  });
+
+  const byYear = {};
+  entries.forEach(e => {
+    const y = e.year || 'n.d.';
+    (byYear[y] = byYear[y] || []).push(e);
+  });
+
+  const typeBadge = {
+    article:       'Journal',
+    inproceedings: 'Conference',
+    misc:          'Preprint',
+    manual:        'Software',
+    phdthesis:     'Thesis',
+  };
+
+  const container = document.getElementById('pub-list');
+  container.innerHTML = '';
+
+  Object.keys(byYear).sort((a,b) => (parseInt(b)||0) - (parseInt(a)||0)).forEach(year => {
+    const yearEl = document.createElement('div');
+    yearEl.className = 'year-header';
+    yearEl.textContent = year;
+    container.appendChild(yearEl);
+
+    byYear[year].forEach(e => {
+      const { venue, links } = formatEntry(e);
+      const badge = typeBadge[e.type] || e.type;
+
+      const div = document.createElement('div');
+      div.className = 'pub pub-entry';
+      div.dataset.entrytype = e.type;   // ← used by filter buttons
+
+      div.innerHTML = `
+        <div class="pub-year">
+          ${e.year || ''}
+          <br><span class="pub-type-badge">${badge}</span>
+        </div>
+        <div class="pub-content">
+          <div class="pub-title">${e.title || '—'}</div>
+          <div class="pub-authors">${e.author || ''}</div>
+          ${venue ? `<div class="pub-venue">${venue}</div>` : ''}
+          ${links ? `<div class="pub-links">${links}</div>` : ''}
+        </div>`;
+
+      container.appendChild(div);
+    });
+  });
+
+  setupFilters();
+}
+
+// ─────────────────────────────────────────────
+// Filter buttons
+// ─────────────────────────────────────────────
+function setupFilters() {
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', function () {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      const filter = this.dataset.filter;
+
+      document.querySelectorAll('.pub-entry').forEach(el => {
+        el.classList.toggle('hidden', filter !== 'all' && el.dataset.entrytype !== filter);
+      });
+
+      // Hide year headers with no visible entries
+      document.querySelectorAll('.year-header').forEach(header => {
+        let sib = header.nextElementSibling;
+        let anyVisible = false;
+        while (sib && !sib.classList.contains('year-header')) {
+          if (!sib.classList.contains('hidden')) { anyVisible = true; break; }
+          sib = sib.nextElementSibling;
+        }
+        header.style.display = anyVisible ? '' : 'none';
+      });
+    });
+  });
+}
+
+// ─────────────────────────────────────────────
+// Fetch and run
+// ─────────────────────────────────────────────
+fetch('assets/publications.bib')
+  .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
+  .then(text => {
+    document.getElementById('bib-loading').style.display = 'none';
+    buildPubList(parseBib(text));
+  })
+  .catch(err => {
+    document.getElementById('bib-loading').textContent =
+      'Could not load publications.bib. Please check the file path. (' + err.message + ')';
+  });
+</script>
+
+</body>
+</html>

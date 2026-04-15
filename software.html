@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Software · Dario Azzimonti</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav>
+  <a class="nav-name" href="index.html">Dario Azzimonti</a>
+  <ul class="nav-links">
+    <li><a href="index.html">About</a></li>
+    <li><a href="publications.html">Publications</a></li>
+    <li><a href="software.html" class="active">Software</a></li>
+  </ul>
+</nav>
+
+<div class="page">
+  <p class="section-label">Software</p>
+  <h2>Packages &amp; Code</h2>
+  <p style="color:var(--muted); font-size:0.88rem; margin-bottom:0.5rem;">
+    To update this page, edit <code style="font-family:var(--mono); font-size:0.8em;">software.html</code> directly.
+    Each package is a <code style="font-family:var(--mono); font-size:0.8em;">.pkg-card</code> block — copy an existing one and fill in the fields.
+  </p>
+
+  <!-- ══════════════════════════════════════════
+       R PACKAGES — AUTHOR / MAINTAINER
+  ══════════════════════════════════════════ -->
+  <h3 style="margin-top:2.5rem;">R Packages — Author / Maintainer</h3>
+  <div class="software-grid">
+
+    <div class="pkg-card">
+      <div class="pkg-name">bayesRecon</div>
+      <div class="pkg-lang">R · CRAN · author, maintainer</div>
+      <div class="pkg-desc">
+        Probabilistic reconciliation of hierarchical time series forecasts via conditioning.
+        Implements analytical Gaussian reconciliation, Bottom-Up Importance Sampling (BUIS),
+        MCMC reconciliation of count series, and mixed-type hierarchies.
+      </div>
+      <a class="pkg-link" href="https://CRAN.R-project.org/package=bayesRecon" target="_blank">→ CRAN</a>
+      &nbsp;&nbsp;
+      <a class="pkg-link" href="https://github.com/IDSIA/bayesRecon" target="_blank">→ GitHub</a>
+      &nbsp;&nbsp;
+      <a class="pkg-link" href="https://idsia.github.io/bayesRecon/" target="_blank">→ Docs</a>
+    </div>
+
+    <div class="pkg-card">
+      <div class="pkg-name">anMC</div>
+      <div class="pkg-lang">R · CRAN · author, maintainer</div>
+      <div class="pkg-desc">
+        Computationally efficient estimation of orthant probabilities of high-dimensional Gaussian vectors.
+        Also implements conservative excursion set estimation under Gaussian random field priors.
+      </div>
+      <a class="pkg-link" href="https://cran.r-project.org/package=anMC" target="_blank">→ CRAN</a>
+    </div>
+
+    <div class="pkg-card">
+      <div class="pkg-name">pGPx</div>
+      <div class="pkg-lang">R · CRAN · author, maintainer</div>
+      <div class="pkg-desc">
+        Computes pseudo-realizations from the posterior distribution of a Gaussian Process for excursion
+        set estimation, using a simulation strategy that minimizes expected distance in measure.
+      </div>
+      <a class="pkg-link" href="https://cran.r-project.org/package=pGPx" target="_blank">→ CRAN</a>
+    </div>
+
+    <div class="pkg-card">
+      <div class="pkg-name">profExtrema</div>
+      <div class="pkg-lang">R · CRAN · author, maintainer</div>
+      <div class="pkg-desc">
+        Computes and visualizes profile extrema functions for arbitrary functions, with GP emulation
+        and uncertainty quantification support for expensive-to-evaluate functions.
+      </div>
+      <a class="pkg-link" href="https://cran.r-project.org/package=profExtrema" target="_blank">→ CRAN</a>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       R PACKAGES — CO-AUTHOR
+  ══════════════════════════════════════════ -->
+  <h3>R Packages — Co-author</h3>
+  <div class="software-grid">
+
+    <div class="pkg-card">
+      <div class="pkg-name">KrigInv</div>
+      <div class="pkg-lang">R · CRAN · co-author</div>
+      <div class="pkg-desc">
+        Criteria and algorithms for sequentially estimating level sets of a multivariate numerical function,
+        for deterministic and noisy computer experiments (Kriging-based inversion).
+      </div>
+      <a class="pkg-link" href="https://cran.r-project.org/package=KrigInv" target="_blank">→ CRAN</a>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PYTHON CODE
+  ══════════════════════════════════════════ -->
+  <h3>Python Code — Contributor</h3>
+  <div class="software-grid">
+
+    <div class="pkg-card">
+      <div class="pkg-name">BayesReconPy</div>
+      <div class="pkg-lang">Python · contributor</div>
+      <div class="pkg-desc">
+        Python port of bayesRecon. Probabilistic reconciliation of hierarchical forecasts,
+        published in the Journal of Open Source Software (2025).
+      </div>
+      <a class="pkg-link" href="https://doi.org/10.21105/joss.08336" target="_blank">→ JOSS</a>
+    </div>
+
+    <div class="pkg-card">
+      <div class="pkg-name">SIFGP</div>
+      <div class="pkg-lang">Python · TensorFlow 2 · contributor</div>
+      <div class="pkg-desc">
+        Sparse Information Filter for fast GP regression. Scales to millions of data points via
+        mini-batch SGD; approximately 4× faster than SVGP at comparable accuracy.
+      </div>
+      <a class="pkg-link" href="https://github.com/lkania/Sparse-IF-for-Fast-GP" target="_blank">→ GitHub</a>
+    </div>
+
+    <div class="pkg-card">
+      <div class="pkg-name">SkewGP</div>
+      <div class="pkg-lang">Python · contributor</div>
+      <div class="pkg-desc">
+        Closed-form posterior inference for GP classification, preference learning, ordinal regression,
+        and mixed problems using Skew Gaussian Processes.
+      </div>
+      <a class="pkg-link" href="https://github.com/benavoli/SkewGP" target="_blank">→ GitHub</a>
+    </div>
+
+    <div class="pkg-card">
+      <div class="pkg-name">SRGP</div>
+      <div class="pkg-lang">Python · contributor</div>
+      <div class="pkg-desc">
+        Stochastic Recursive GP regression using a Kalman filter formulation, estimating model
+        parameters by recursively propagating gradients over mini-batches.
+      </div>
+      <a class="pkg-link" href="https://github.com/manuelIDSIA/SRGP" target="_blank">→ GitHub</a>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  © 2025 Dario Azzimonti · IDSIA USI-SUPSI · Lugano, Switzerland
+</footer>
+
+</body>
+</html>
