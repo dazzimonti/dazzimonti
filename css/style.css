@@ -211,10 +211,10 @@ footer {
 }
 
 @media (max-width: 680px) {
-  .hero-photo {
-    max-width: 200px;
-  }
   .hero-grid {
     grid-template-columns: 1fr !important;
+  }
+  .hero-photo {
+    max-width: 200px;
   }
 }
