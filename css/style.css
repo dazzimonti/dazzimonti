@@ -66,6 +66,14 @@ nav {
 }
 .page + .page, section + section { border-top: 1px solid var(--rule); }
 
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 4rem;
+  align-items: start;
+  padding-top: 5rem;
+}
+
 /* ── TYPOGRAPHY ── */
 .section-label {
   font-family: var(--mono);
@@ -213,6 +221,8 @@ footer {
 @media (max-width: 680px) {
   .hero-grid {
     grid-template-columns: 1fr !important;
+    gap: 2rem;
+    padding-top: 2.5rem;
   }
   .hero-photo {
     max-width: 200px;
