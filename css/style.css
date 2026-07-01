@@ -189,6 +189,52 @@ h3 {
 .pkg-desc { font-size: 0.84rem; color: var(--muted); line-height: 1.6; margin-bottom: 1rem; }
 .pkg-link { font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); text-decoration: none; }
 
+/* ── PRESENTATIONS / TALKS ── */
+.talk-card {
+  background: var(--card);
+  border: 1px solid var(--rule);
+  padding: 1.5rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.talk-card:hover {
+  border-color: var(--accent);
+  box-shadow: 4px 4px 0 var(--accent-light);
+}
+.talk-title { font-size: 0.94rem; font-weight: 500; margin-bottom: 0.3rem; }
+.talk-meta {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.8rem;
+}
+.talk-desc { font-size: 0.84rem; color: var(--muted); line-height: 1.6; margin-bottom: 1rem; }
+.talk-links { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
+.talk-link {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid var(--accent-light);
+  padding-bottom: 1px;
+  transition: border-color 0.2s;
+}
+.talk-link:hover { border-color: var(--accent); }
+.talk-format {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.5rem;
+  background: var(--accent-light);
+  color: var(--accent);
+  border: 1px solid #b8d3ea;
+}
+
 /* ── FOOTER ── */
 footer {
   border-top: 1px solid var(--rule);
